@@ -1,0 +1,19 @@
+.square-container {
+  width: 75px;
+  height: 75px;
+}
+
+.square {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75px;
+  height: 75px;
+  border: black solid 1px;
+    &.dark {
+      background-color: #d08b46;
+    }
+    &.light {
+      background-color: #ffcf9d;
+    }
+}
