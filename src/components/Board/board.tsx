@@ -1,25 +1,25 @@
-import React, {ReactNode} from 'react'
+import React, {ReactNode, useEffect} from 'react'
 import {columns, rows} from '../Game/game'
 import Square from '../Square/square'
 import './styles/board.scss'
 
 function mapValueToLetter(value: number): string {
     switch (value) {
-        case 0:
-            return 'a';
         case 1:
-            return 'b';
+            return 'a';
         case 2:
-            return 'c';
+            return 'b';
         case 3:
-            return 'd';
+            return 'c';
         case 4:
-            return 'e';
+            return 'd';
         case 5:
-            return 'f';
+            return 'e';
         case 6:
-            return 'g';
+            return 'f';
         case 7:
+            return 'g';
+        case 8:
             return 'h';
         default:
             throw new Error(`Invalid value: ${value}`);
@@ -28,28 +28,46 @@ function mapValueToLetter(value: number): string {
 
 
 const Board = () => {
+    const [board, setBoard] = React.useState<ReactNode>([])
+
     function renderBoard(): ReactNode[] {
-        const squares: ReactNode[] = []
-        for (let i: number = 0; i <= columns; i++) {
-            for (let j: number = 0; j <= rows; j++) {
-                squares.push(
-                    <div key={i} className={'square-container'}>
+        const newBoard: ReactNode[] = [];
+
+        for (let i: number = 1; i <= columns; i++) {
+            const columnContent: ReactNode[] = [];
+
+            for (let j: number = 1; j <= rows; j++) {
+                columnContent.push(
+                    <div key={`${i}-${j}`} className={'square-container'}>
                         <Square
-                            // @ts-ignore
-                            className={`square -${mapValueToLetter(i)} -${j + 1}`}
+                            className={`square -${mapValueToLetter(i)} -${9 - j}`}
                             column={i}
-                            // @ts-ignore
                             row={j}
+                            pos={`${mapValueToLetter(i)}${9 - j}`}
+                            renderBoard={renderBoard}
+                            setBoard={setBoard}
                         />
                     </div>
-                )
+                );
             }
+
+            newBoard.push(
+                <div key={`column-${i}`} className={'column-container'}>
+                    {columnContent}
+                </div>
+            );
         }
-        return squares;
+
+        return newBoard
     }
 
+
+    useEffect(() => {
+        setBoard(renderBoard())
+    }, [])
+
     return <div className={'board-container'}>
-        {renderBoard()}
+        {board}
     </div>
 }
 

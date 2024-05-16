@@ -1,39 +1,46 @@
-import React, {ReactElement} from 'react'
-import KingLight from '../../assets/images/kingLight.svg'
+import React, {ReactComponentElement, ReactElement, useState} from 'react'
+// @ts-ignore
+import {ReactComponent as KingLight} from '../../assets/images/kinglight.svg'
 
 interface PieceProps {
-    pieceType: string,
-    pieceColor: string
+    occupied: boolean;
+    setOccupied: React.Dispatch<React.SetStateAction<boolean>>;
+    pos: string; // Add pos property
+    handlePieceDrop: () => void;
 }
 
-export const PIECE_TYPES = {
-    king: {
-        name: 'king',
-    color: {
-        Light: <KingLight/>,
-    },
-    },
-    queen: 'queen',
-    knight: 'knight',
-    bishop: 'bishop',
-    rook: 'rook',
-    pawn: 'pawn',
-}
 
-const Piece: React.FC<PieceProps> = ({pieceType, pieceColor}): ReactElement => {
+const Piece: React.FC<PieceProps> = ({ pos, handlePieceDrop }): ReactElement | null => {
 
-    const renderPiece = (pieceType: string, pieceColor: string) => {
-        // @ts-ignore
-        console.log(pieceType, pieceColor)
-        // @ts-ignore
-        const lookup: object[] = pieceType
-        // @ts-ignore
-        return PIECE_TYPES[lookup][pieceColor]
-    }
-    return <div className={'piece-container'}>
-        <KingLight />
-    </div>
+    const handlePieceDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        // Hide the original element being dragged
+        event.currentTarget.style.opacity = '0';
 
-}
+        // Set the original element as the drag image
+        event.dataTransfer.setDragImage(event.currentTarget, 0, 0);
 
-export default Piece
+        event.currentTarget.style.cursor = 'grabbing'; // Change cursor to grabbing hand icon
+    };
+
+    const handlePieceDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
+        // Show the original element after the drag operation ends
+        event.currentTarget.style.opacity = '1';
+        event.currentTarget.style.cursor = 'pointer'; // Reset cursor to default pointer
+
+        // Set dragging state to false
+    };
+
+    return (
+        <div
+            className="piece-container"
+            onDragStart={handlePieceDragStart}
+            onDragEnd={handlePieceDragEnd}
+            style={{ cursor: 'pointer' }} // Set initial cursor style to pointer
+            draggable={true}
+        >
+            {pos === 'e1' && <KingLight />}
+        </div>
+    );
+};
+
+export default Piece;
